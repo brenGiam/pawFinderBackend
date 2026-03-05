@@ -57,6 +57,7 @@ public class Pet {
     private String breed; // debería estar en SIN RAZA como predeterminado, lista desplegable con todas
                           // las razas
 
+    @Builder.Default
     @ElementCollection
     @CollectionTable(name = "pet_color", joinColumns = @JoinColumn(name = "pet_id"))
     @Column(name = "color", nullable = false)
@@ -80,12 +81,14 @@ public class Pet {
     @Column(name = "registration_date")
     private LocalDate registrationDate;
 
+    @Builder.Default
     @Column(nullable = false)
     private boolean active = true;
 
     @Column(name = "deleted_at")
     private LocalDate deletedAt;
 
+    @Builder.Default
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true) // por el momento voy a permitir subir una sola foto
                                                                 // pero lo dejo asi para futuro
     @JoinColumn(name = "pet_id")
@@ -95,6 +98,7 @@ public class Pet {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Builder.Default
     @OneToMany(mappedBy = "uploadedPet", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Match> matches = new ArrayList<>();
 

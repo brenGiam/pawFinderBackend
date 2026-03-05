@@ -55,12 +55,14 @@ public class User {
     @Column(name = "registration_date")
     private LocalDate registrationDate;
 
+    @Builder.Default
     @Column(nullable = false)
     private boolean active = true;
 
     @Column(name = "deleted_at")
     private LocalDate deletedAt;
 
+    @Builder.Default
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Pet> pets = new ArrayList<>();
 

@@ -42,6 +42,7 @@ public class Match {
     @JoinColumn(name = "matched_pet_id", nullable = false)
     private Pet matchedPet;
 
+    @Builder.Default
     @OneToMany(mappedBy = "match", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MatchUserState> userStates = new ArrayList<>();
 
