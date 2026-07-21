@@ -28,18 +28,22 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "matches", uniqueConstraints = @UniqueConstraint(columnNames = { "uploaded_pet_id", "matched_pet_id" }))
+@Table(name = "matches", uniqueConstraints = @UniqueConstraint(columnNames = { "newPet_id", "matchedPet_id" }))
 public class Match {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "uploaded_pet_id", nullable = false)
-    private Pet uploadedPet;
+    // Mascota que origina la búsqueda de coincidencias. La que acaba de ser
+    // publicada.
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "newPet_id", nullable = false)
+    private Pet newPet;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "matched_pet_id", nullable = false)
+    // Mascota candidata encontrada por el algoritmo de coincidencias. La que se
+    // sugiere como posible match.
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "matchedPet_id", nullable = false)
     private Pet matchedPet;
 
     @Builder.Default
@@ -53,6 +57,20 @@ public class Match {
     @PrePersist
     public void prePersist() {
         this.date = LocalDate.now();
+    }
+
+    // Helpers para que ambos lados de la relación se mantengan sincronizados.
+    public void addUserState(MatchUserState userState) {
+        if (!userStates.contains(userState)) {
+            userStates.add(userState);
+            userState.setMatch(this);
+        }
+    }
+
+    public void removeUserState(MatchUserState userState) {
+        if (userStates.remove(userState)) {
+            userState.setMatch(null);
+        }
     }
 
 }

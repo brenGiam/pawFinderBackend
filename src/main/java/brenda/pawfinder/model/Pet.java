@@ -74,7 +74,7 @@ public class Pet {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private PetGender gender;
+    private PetGender gender; // macho/hembra/indefinido, con radio button
 
     private String neighborhood; // barrio en el que se perdió o fue encontrado
 
@@ -97,10 +97,6 @@ public class Pet {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-
-    @Builder.Default
-    @OneToMany(mappedBy = "uploadedPet", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Match> matches = new ArrayList<>();
 
     @PrePersist
     public void prePersist() {

@@ -49,20 +49,21 @@ public class User {
     @Column(nullable = false)
     private String city;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String phone;
 
     @Column(name = "registration_date")
     private LocalDate registrationDate;
 
-    @Builder.Default
+    @Builder.Default // Para que el valor por defecto sea true al crear un usuario, sino quedaría
+                     // como null
     @Column(nullable = false)
     private boolean active = true;
 
     @Column(name = "deleted_at")
     private LocalDate deletedAt;
 
-    @Builder.Default
+    @Builder.Default // Para que la lista no quede como null, sino como una lista vacía
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Pet> pets = new ArrayList<>();
 
@@ -74,5 +75,19 @@ public class User {
     public void softDelete() {
         this.active = false;
         this.deletedAt = LocalDate.now();
+    }
+
+    // Helpers para que ambos lados de la relación se mantengan sincronizados
+    public void addPet(Pet pet) {
+        if (!pets.contains(pet)) {
+            pets.add(pet);
+            pet.setUser(this);
+        }
+    }
+
+    public void removePet(Pet pet) {
+        if (pets.remove(pet)) {
+            pet.setUser(null);
+        }
     }
 }
