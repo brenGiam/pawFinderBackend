@@ -1,6 +1,6 @@
 package brenda.pawfinder.enums;
 
-public enum Species {
+public enum Specie {
     PERRO,
     GATO
 

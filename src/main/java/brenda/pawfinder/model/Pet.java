@@ -6,7 +6,7 @@ import java.util.List;
 
 import brenda.pawfinder.enums.PetGender;
 import brenda.pawfinder.enums.PetState;
-import brenda.pawfinder.enums.Species;
+import brenda.pawfinder.enums.Specie;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -19,7 +19,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -42,7 +42,7 @@ public class Pet {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Species specie; // perro/gato, con radio button
+    private Specie specie; // perro/gato, con radio button
 
     @Enumerated(EnumType.STRING)
     @Column(name = "pet_state", nullable = false)
@@ -52,7 +52,7 @@ public class Pet {
                          // nombre
 
     @Column(name = "with_collar", nullable = false)
-    private boolean withCollar; // debería estar en NO como predeterminado, con radio button
+    private Boolean withCollar; // debería estar en NO como predeterminado, con radio button
 
     private String breed; // debería estar en SIN RAZA como predeterminado, lista desplegable con todas
                           // las razas
@@ -60,7 +60,7 @@ public class Pet {
     @Builder.Default
     @ElementCollection
     @CollectionTable(name = "pet_color", joinColumns = @JoinColumn(name = "pet_id"))
-    @Column(name = "color", nullable = false)
+    @Column(name = "colors", nullable = false)
     private List<String> colors = new ArrayList<>(); // el usuario puede elegir varios colores, con checkbox
 
     private String details; // el usuario puede escribir todas las características que crea necesarias
@@ -88,11 +88,9 @@ public class Pet {
     @Column(name = "deleted_at")
     private LocalDate deletedAt;
 
-    @Builder.Default
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true) // por el momento voy a permitir subir una sola foto
-                                                                // pero lo dejo asi para futuro
-    @JoinColumn(name = "pet_id")
-    private List<Image> images = new ArrayList<>();
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "image_id")
+    private Image image;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
